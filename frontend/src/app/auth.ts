@@ -3,6 +3,7 @@
  * Estado simples com token JWT e localStorage
  */
 
+import React from 'react';
 import { apiClient } from './api';
 
 // Tipo para dados do utilizador

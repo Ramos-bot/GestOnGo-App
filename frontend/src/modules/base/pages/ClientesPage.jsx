@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { apiClient } from '../../app/api';
+import { apiClient } from '../../../app/api';
 
 const ClientesPage = () => {
   const [clientes, setClientes] = useState([]);

@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { authService } from '../../app/auth';
+import { authService } from '../../../app/auth';
 
 const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { apiClient } from '../../app/api';
+import { apiClient } from '../../../app/api';
 
 const ServicosJardimPage = () => {
   const [servicos, setServicos] = useState([]);
