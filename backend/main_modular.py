@@ -7,6 +7,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
+# Importar configuração do Replit
+from app.core.replit_config import config
+
 # Importar configuração da base de dados
 from app.core.database import criar_tabelas
 
@@ -17,43 +20,40 @@ from app.routers_base.clientes import router as clientes_router
 # Importar routers dos módulos (podem ser comentados para desativar)
 try:
     from modules.verde.routers.servicos_jardim import router as verde_router
-    MODULO_VERDE_DISPONIVEL = True
-    print("✅ Módulo Verde (Jardinagem) registado")
+    MODULO_VERDE_DISPONIVEL = config.MODULO_VERDE_ATIVO
+    if MODULO_VERDE_DISPONIVEL:
+        print("✅ Módulo Verde (Jardinagem) registado")
 except ImportError:
     MODULO_VERDE_DISPONIVEL = False
     print("⚠️ Módulo Verde não disponível")
 
 try:
     from modules.aqua.routers.servicos_piscina import router as aqua_router
-    MODULO_AQUA_DISPONIVEL = True
-    print("✅ Módulo Aqua (Piscinas) registado")
+    MODULO_AQUA_DISPONIVEL = config.MODULO_AQUA_ATIVO
+    if MODULO_AQUA_DISPONIVEL:
+        print("✅ Módulo Aqua (Piscinas) registado")
 except ImportError:
     MODULO_AQUA_DISPONIVEL = False
     print("⚠️ Módulo Aqua não disponível")
 
 # Criar aplicação FastAPI
 app = FastAPI(
-    title="GestOnGo",
+    title=config.APP_NAME,
     description="Sistema modular de gestão de serviços de campo com suporte para jardinagem e piscinas",
-    version="2.0.0",
+    version=config.APP_VERSION,
     docs_url="/docs",
     redoc_url="/redoc",
+    debug=config.DEBUG
 )
 
-# Configurar CORS
-origins = [
-    "http://localhost:3000",  # React development server
-    "http://localhost:5173",  # Vite development server
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
-
+# Configurar CORS com configurações do Replit
+cors_settings = config.get_cors_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=cors_settings["allow_origins"],
+    allow_credentials=cors_settings["allow_credentials"],
+    allow_methods=cors_settings["allow_methods"],
+    allow_headers=cors_settings["allow_headers"],
 )
 
 # Registar routers da versão base (sempre disponíveis)
@@ -129,13 +129,38 @@ async def root():
     
     return {
         "mensagem": "Bem-vindo ao GestOnGo!",
-        "versao": "2.0.0",
+        "versao": config.APP_VERSION,
         "descricao": "Sistema modular de gestão de serviços de campo",
+        "ambiente": config.ENVIRONMENT,
         "modulos_activos": modulos_activos,
         "documentacao": "/docs",
         "credenciais_teste": {
             "email": "admin@gestongo.com",
             "senha": "admin123"
+        }
+    }
+
+@app.get("/config")
+async def config_status():
+    """
+    Endpoint para verificar configuração (sem mostrar valores sensíveis)
+    """
+    secrets_status = config.verify_secrets()
+    
+    return {
+        "app_name": config.APP_NAME,
+        "version": config.APP_VERSION,
+        "environment": config.ENVIRONMENT,
+        "debug": config.DEBUG,
+        "database_type": config.DATABASE_TYPE,
+        "modules": {
+            "verde": config.MODULO_VERDE_ATIVO,
+            "aqua": config.MODULO_AQUA_ATIVO
+        },
+        "cors_origins_count": len(config.ALLOWED_ORIGINS),
+        "secrets_configured": {
+            secret: info["configured"] 
+            for secret, info in secrets_status.items()
         }
     }
 

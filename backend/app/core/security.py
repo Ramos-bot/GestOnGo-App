@@ -17,13 +17,13 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.replit_config import config
 from app.models_base.user import User
 
-# Chave secreta usada para assinar os tokens. Em produção, esta chave deverá
-# ser gerada de forma segura e nunca ser exposta no código fonte.
-SECRET_KEY = "gestongo_chave_secreta_forte_2025"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# Configurações de segurança carregadas do Replit
+SECRET_KEY = config.JWT_SECRET_KEY
+ALGORITHM = config.JWT_ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = config.JWT_EXPIRATION_MINUTES
 
 # Contexto de hashing de senhas. O bcrypt é um algoritmo robusto e amplamente
 # utilizado. A biblioteca passlib facilita a sua utilização e gestão de versões.
