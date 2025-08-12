@@ -1,0 +1,93 @@
+{
+    "// CONFIGURAÇÕES DO VS CODE - GESTONGO": "Configurações específicas do projeto",
+    
+    "// Configurações gerais do editor": "",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    
+    "// Configurações Python (Backend)": "",
+    "python.defaultInterpreterPath": "./backend/venv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "black",
+    "python.sortImports.args": ["--profile", "black"],
+    
+    "// Configurações TypeScript/JavaScript (Frontend)": "",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "javascript.suggest.autoImports": true,
+    
+    "// Configurações de arquivos": "",
+    "files.associations": {
+        "*.py": "python",
+        "*.ts": "typescript",
+        "*.tsx": "typescriptreact",
+        "*.jsx": "javascriptreact",
+        ".env*": "dotenv",
+        "*.md": "markdown"
+    },
+    
+    "// Exclusões do explorador": "",
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/node_modules": true,
+        "**/.git": false,
+        "**/dist": true,
+        "**/build": true,
+        "**/*.pyc": true
+    },
+    
+    "// Configurações Git": "",
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "git.suggestSmartCommit": true,
+    
+    "// Terminal integrado": "",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    
+    "// Configurações de busca": "",
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/build": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/venv": true,
+        "**/env": true
+    },
+    
+    "// IntelliSense e autocomplete": "",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    
+    "// Configurações de debug": "",
+    "debug.internalConsoleOptions": "openOnSessionStart",
+    
+    "// GitHub Copilot": "",
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": false,
+        "plaintext": false,
+        "markdown": true,
+        "python": true,
+        "javascript": true,
+        "typescript": true,
+        "typescriptreact": true,
+        "javascriptreact": true
+    },
+    
+    "// Emmet": "",
+    "emmet.includeLanguages": {
+        "javascriptreact": "html",
+        "typescriptreact": "html"
+    }
+}

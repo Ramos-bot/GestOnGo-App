@@ -1,0 +1,60 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🐍 Debug Backend (FastAPI)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/main_modular.py",
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "env": {
+                "FEATURE_AQUA": "true",
+                "FEATURE_VERDE": "true",
+                "FEATURE_PHYTO": "false",
+                "PYTHONPATH": "${workspaceFolder}/backend"
+            },
+            "args": [],
+            "justMyCode": false,
+            "stopOnEntry": false
+        },
+        {
+            "name": "🌐 Debug Frontend (React Dev)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/frontend",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "port": 5173,
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "🧪 Debug Tests (Backend)",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "cwd": "${workspaceFolder}/backend",
+            "args": [
+                "tests/",
+                "-v",
+                "--tb=short"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "FEATURE_AQUA": "true",
+                "FEATURE_VERDE": "true", 
+                "FEATURE_PHYTO": "true",
+                "PYTHONPATH": "${workspaceFolder}/backend"
+            }
+        },
+        {
+            "name": "🔧 Debug Replit Status Check",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/verify_replit_status.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
