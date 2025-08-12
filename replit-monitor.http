@@ -1,0 +1,113 @@
+### ====================================================================
+### REPLIT API MONITOR - GestOnGo
+### Para usar: Instalar extensão "REST Client" no VS Code
+### ====================================================================
+
+### Variáveis de Ambiente
+@replit_url = https://gestongo-app.tiago1982santos.repl.co
+@local_url = http://localhost:8000
+
+### ====================================================================
+### 🏠 API ROOT - Status Geral
+### ====================================================================
+GET {{replit_url}}/
+Accept: application/json
+
+### ====================================================================
+### 💓 HEALTH CHECK - Verificação de Saúde
+### ====================================================================
+GET {{replit_url}}/health
+Accept: application/json
+
+### ====================================================================
+### 🧩 MODULES STATUS - Estado dos Módulos
+### ====================================================================
+GET {{replit_url}}/modules
+Accept: application/json
+
+### ====================================================================
+### 📚 API DOCUMENTATION - Swagger/OpenAPI
+### ====================================================================
+GET {{replit_url}}/docs
+Accept: text/html
+
+### ====================================================================
+### 🔧 OPENAPI SCHEMA - Especificação da API
+### ====================================================================
+GET {{replit_url}}/openapi.json
+Accept: application/json
+
+### ====================================================================
+### 🌊 MÓDULO AQUA - Testes (se ativo)
+### ====================================================================
+GET {{replit_url}}/aqua/
+Accept: application/json
+
+### ====================================================================
+### 🌱 MÓDULO VERDE - Testes (se ativo)
+### ====================================================================
+GET {{replit_url}}/verde/
+Accept: application/json
+
+### ====================================================================
+### 🌿 MÓDULO PHYTO - Testes (se ativo)
+### ====================================================================
+GET {{replit_url}}/phyto/
+Accept: application/json
+
+### ====================================================================
+### 🆚 COMPARAÇÃO LOCAL vs REPLIT
+### ====================================================================
+
+### Local API Root
+GET {{local_url}}/
+Accept: application/json
+
+###
+
+### Replit API Root  
+GET {{replit_url}}/
+Accept: application/json
+
+### ====================================================================
+### 📊 BATCH TEST - Todos os Endpoints
+### ====================================================================
+
+### Test 1: Root
+GET {{replit_url}}/
+
+### Test 2: Health
+GET {{replit_url}}/health
+
+### Test 3: Modules
+GET {{replit_url}}/modules
+
+### Test 4: Docs
+GET {{replit_url}}/docs
+
+### ====================================================================
+### 🔍 TROUBLESHOOTING
+### ====================================================================
+
+### Ping Test (se suportado)
+GET {{replit_url}}/ping
+
+### CORS Test
+OPTIONS {{replit_url}}/
+Origin: http://localhost:3000
+
+### ====================================================================
+### 🚀 PERFORMANCE TEST
+### ====================================================================
+
+### Response Time Test
+GET {{replit_url}}/health
+Accept: application/json
+
+### ====================================================================
+### 📈 MONITORING HEADERS
+### ====================================================================
+
+### Check Response Headers
+GET {{replit_url}}/
+Accept: application/json

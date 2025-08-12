@@ -59,6 +59,12 @@
         "humao.rest-client",
         "42crunch.vscode-openapi",
         // ================================================
+        // REPLIT & REMOTE DEVELOPMENT
+        // ================================================
+        "ms-vscode-remote.remote-ssh",
+        "ms-vscode.remote-explorer",
+        "github.remotehub",
+        // ================================================
         // MARKDOWN & DOCUMENTAÇÃO
         // ================================================
         "yzhang.markdown-all-in-one",

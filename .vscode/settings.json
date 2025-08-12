@@ -80,5 +80,25 @@
     "emmet.includeLanguages": {
         "javascriptreact": "html",
         "typescriptreact": "html"
-    }
+    },
+    "// Configurações Replit Integration": "",
+    "remote.SSH.defaultForwardedPorts": [
+        {
+            "localPort": 8000,
+            "remotePort": 8000,
+            "name": "GestOnGo API"
+        }
+    ],
+    "// REST Client - URLs de ambiente": "",
+    "rest-client.environmentVariables": {
+        "local": {
+            "apiUrl": "http://localhost:8000"
+        },
+        "replit": {
+            "apiUrl": "https://gestongo-app.tiago1982santos.repl.co"
+        }
+    },
+    "// URLs úteis para quick access": "",
+    "workbench.startupEditor": "welcomePage",
+    "explorer.openEditors.visible": 10
 }

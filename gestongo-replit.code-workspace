@@ -1,0 +1,51 @@
+{
+    "folders": [
+        {
+            "name": "🏠 GestOnGo Workspace",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "// CONFIGURAÇÕES ESPECÍFICAS REPLIT": "",
+        "terminal.integrated.env.windows": {
+            "REPLIT_URL": "https://gestongo-app.tiago1982santos.repl.co",
+            "REPLIT_EDITOR": "https://replit.com/@tiago1982santos/GestOnGo-App"
+        },
+        "// URLs para quick access": "",
+        "workbench.colorCustomizations": {
+            "statusBar.background": "#007ACC",
+            "statusBar.foreground": "#ffffff",
+            "statusBar.noFolderBackground": "#007ACC"
+        },
+        "// REST Client environment": "",
+        "rest-client.defaultHeaders": {
+            "User-Agent": "VS-Code-REST-Client/GestOnGo-Dev"
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "humao.rest-client",
+            "ms-vscode-remote.remote-ssh",
+            "github.copilot",
+            "github.vscode-pull-request-github",
+            "eamodio.gitlens"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "🚀 Quick Deploy to Replit",
+                "type": "shell",
+                "command": "git add . && git commit -m 'quick deploy' && git push origin main && python verify_replit_status.py",
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": true,
+                    "panel": "shared"
+                }
+            }
+        ]
+    }
+}
