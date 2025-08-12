@@ -1,13 +1,41 @@
-# GestOnGo - Field Service Management
+# GestOnGo — Monorepo
 
-A modern field service management application built with FastAPI and React.
+![CI](https://github.com/ramos-bot/gestongo-app/actions/workflows/ci.yml/badge.svg)
 
-## 🚀 Features
+Estrutura:
+- `frontend/` — React (CRA) para web
+- `backend/` — API Express
 
-- **Authentication & Authorization**: JWT-based secure login system
-- **Client Management**: Complete CRUD operations for clients
-- **Service Management**: Track and manage field services
-- **Modern UI**: Responsive React frontend with clean design
+## Requisitos
+- Node 20+
+- npm 10+
+
+## Fluxo rápido
+```bash
+# Frontend
+cd frontend
+npm ci
+npm start        # http://localhost:3000
+npm test -- --watchAll=false
+npm run build
+
+# Backend
+cd ../backend
+npm ci
+npm run dev      # http://localhost:8000
+npm test
+```
+
+## CI/CD
+O GitHub Actions (`.github/workflows/ci.yml`) executa:
+- testes frontend e backend
+- (opcional) docker build
+- deploy Firebase Hosting (apenas main)
+
+## Pastas
+- `frontend/public/` — HTML base da app web
+- `frontend/src/` — código React
+- `backend/` — API + testes (Jest/Supertest)
 - **API Documentation**: Auto-generated OpenAPI docs
 - **Professional Development**: Full testing, CI/CD, and deployment setup
 
