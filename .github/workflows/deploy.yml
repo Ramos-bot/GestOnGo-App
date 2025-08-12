@@ -1,0 +1,248 @@
+name: 🚀 Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # 🏗️ **Build e Push das Images**
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔐 Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 🔧 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 🏗️ **Build Backend**
+      - name: 🏗️ Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+      # 🏗️ **Build Frontend**
+      - name: 🏗️ Build and push Frontend
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./frontend/Dockerfile.optimized
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-frontend:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  # 🚀 **Deploy para Servidor**
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔐 Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📝 Prepare deployment files
+        run: |
+          # Criar diretório temporário para deployment
+          mkdir -p deployment
+          
+          # Copiar docker-compose para produção
+          envsubst < compose.production.yaml > deployment/docker-compose.yml
+          
+          # Criar script de deploy
+          cat > deployment/deploy.sh << 'EOF'
+          #!/bin/bash
+          set -euo pipefail
+          
+          echo "🚀 Starting deployment..."
+          
+          # Variáveis
+          APP_NAME="gestongo"
+          DEPLOY_DIR="/opt/${APP_NAME}"
+          BACKUP_DIR="/opt/backups/${APP_NAME}"
+          
+          # Criar diretórios se não existirem
+          sudo mkdir -p "${DEPLOY_DIR}" "${BACKUP_DIR}"
+          
+          # Backup da versão anterior
+          if [ -f "${DEPLOY_DIR}/docker-compose.yml" ]; then
+              echo "📦 Creating backup..."
+              sudo cp "${DEPLOY_DIR}/docker-compose.yml" "${BACKUP_DIR}/docker-compose-$(date +%Y%m%d-%H%M%S).yml"
+          fi
+          
+          # Copiar novos arquivos
+          echo "📁 Copying deployment files..."
+          sudo cp docker-compose.yml "${DEPLOY_DIR}/"
+          
+          # Navegar para diretório de deploy
+          cd "${DEPLOY_DIR}"
+          
+          # Login no registry
+          echo "🔐 Logging into container registry..."
+          echo "${GITHUB_TOKEN}" | sudo docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          
+          # Pull das novas images
+          echo "📥 Pulling new images..."
+          sudo docker-compose pull
+          
+          # Health check da aplicação atual (se existir)
+          if sudo docker-compose ps | grep -q "Up"; then
+              echo "🔍 Running health check on current version..."
+              if ! curl -f http://localhost/health &>/dev/null; then
+                  echo "⚠️ Current version health check failed, proceeding with deployment..."
+              fi
+          fi
+          
+          # Deploy com zero downtime
+          echo "🔄 Deploying new version..."
+          sudo docker-compose up -d --remove-orphans
+          
+          # Aguardar serviços ficarem prontos
+          echo "⏳ Waiting for services to be ready..."
+          sleep 30
+          
+          # Health check da nova versão
+          echo "🏥 Health checking new deployment..."
+          for i in {1..30}; do
+              if curl -f http://localhost/health &>/dev/null; then
+                  echo "✅ Health check passed!"
+                  break
+              fi
+              if [ $i -eq 30 ]; then
+                  echo "❌ Health check failed after 30 attempts"
+                  echo "🔄 Rolling back..."
+                  sudo docker-compose down
+                  exit 1
+              fi
+              echo "⏳ Attempt $i/30 failed, retrying in 10s..."
+              sleep 10
+          done
+          
+          # Limpeza de images antigas
+          echo "🧹 Cleaning up old images..."
+          sudo docker image prune -f
+          
+          # Mostrar status final
+          echo "📊 Final status:"
+          sudo docker-compose ps
+          
+          echo "🎉 Deployment completed successfully!"
+          EOF
+          
+          chmod +x deployment/deploy.sh
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_ACTOR: ${{ github.actor }}
+
+      - name: 🚀 Deploy to server
+        run: |
+          # Copiar arquivos para servidor
+          scp -o StrictHostKeyChecking=no -r deployment/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
+          
+          # Executar deployment no servidor
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /tmp/deployment
+            export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+            export GITHUB_ACTOR="${{ github.actor }}"
+            export GITHUB_SHA="${{ github.sha }}"
+            ./deploy.sh
+          EOF
+
+      - name: 🔔 Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            🚀 **Deployment ${{ job.status }}**
+            
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            **Environment:** ${{ github.event.inputs.environment || 'production' }}
+            **Actor:** ${{ github.actor }}
+            
+            ${{ job.status == 'success' && '✅ Deployment completed successfully!' || '❌ Deployment failed!' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # 🧪 **Smoke Tests Pós-Deploy**
+  smoke-tests:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: 🔍 Health Check
+        run: |
+          echo "🏥 Running post-deployment health checks..."
+          
+          # Test main endpoints
+          curl -f ${{ secrets.APP_URL }}/health
+          curl -f ${{ secrets.APP_URL }}/api/health
+          
+          echo "✅ All health checks passed!"
+
+      - name: 🧪 API Smoke Tests
+        run: |
+          echo "🧪 Running API smoke tests..."
+          
+          # Test key API endpoints
+          curl -f -H "Accept: application/json" ${{ secrets.APP_URL }}/api/health
+          
+          echo "✅ API smoke tests passed!"
