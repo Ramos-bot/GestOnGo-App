@@ -1,0 +1,33 @@
+# Configuração Netlify para GestOnGo Frontend
+
+# Build settings
+[build]
+  base = "frontend/"
+  publish = "dist/"
+  command = "npm run build"
+
+# Environment variables para build
+[build.environment]
+  VITE_FIREBASE_API_KEY = "AIzaSyB0PxRHDzPPq6EcSpiMMwirWWfwUhBmamQ"
+  VITE_FIREBASE_AUTH_DOMAIN = "gestongo-app.firebaseapp.com"
+  VITE_FIREBASE_PROJECT_ID = "gestongo-app"
+  VITE_FIREBASE_STORAGE_BUCKET = "gestongo-app.firebasestorage.app"
+  VITE_FIREBASE_MESSAGING_SENDER_ID = "49732729437"
+  VITE_FIREBASE_APP_ID = "1:49732729437:web:4f20a0600cbe8a66472bb4"
+  VITE_FIREBASE_MEASUREMENT_ID = "G-E2N9HME0FQ"
+  VITE_API_URL = "https://gestongo-app.ramos-bot.repl.co"
+
+# Redirects para SPA
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de segurança
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
