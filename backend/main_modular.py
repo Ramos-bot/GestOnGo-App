@@ -1,179 +1,256 @@
 """
 GestOnGo - Sistema Modular de Gestão de Serviços de Campo
-Aplicação FastAPI com arquitectura modular para serviços de jardinagem e piscinas
+Backend FastAPI com arquitetura modular baseada em feature flags
+
+Módulos disponíveis:
+- AQUA: Gestão de serviços de piscinas
+- VERDE: Gestão de serviços de jardinagem  
+- PHYTO: Gestão de fitoterapia e plantas medicinais
+
+Cada módulo é carregado dinamicamente baseado nas variáveis de ambiente:
+- FEATURE_AQUA=true/false
+- FEATURE_VERDE=true/false  
+- FEATURE_PHYTO=true/false
 """
 
+import os
+from typing import Dict, Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
-# Importar configuração do Replit
-from app.core.replit_config import config
+# ====================================================================
+# CONFIGURAÇÃO DE FEATURE FLAGS
+# ====================================================================
 
-# Importar configuração da base de dados
-from app.core.database import criar_tabelas
+def get_feature_flag(feature_name: str, default: bool = False) -> bool:
+    """
+    Lê uma feature flag das variáveis de ambiente
+    
+    Args:
+        feature_name: Nome da feature (ex: 'FEATURE_AQUA')
+        default: Valor padrão se a variável não existir
+        
+    Returns:
+        True se a feature estiver ativa, False caso contrário
+    """
+    value = os.getenv(feature_name, str(default)).lower()
+    return value in ('true', '1', 'yes', 'on', 'enabled')
 
-# Importar routers da versão base
-from app.routers_base.users import router as users_router
-from app.routers_base.clientes import router as clientes_router
+# Leitura das feature flags
+FEATURE_AQUA = get_feature_flag('FEATURE_AQUA', True)
+FEATURE_VERDE = get_feature_flag('FEATURE_VERDE', True) 
+FEATURE_PHYTO = get_feature_flag('FEATURE_PHYTO', False)
 
-# Importar routers dos módulos (podem ser comentados para desativar)
-try:
-    from modules.verde.routers.servicos_jardim import router as verde_router
-    MODULO_VERDE_DISPONIVEL = config.MODULO_VERDE_ATIVO
-    if MODULO_VERDE_DISPONIVEL:
-        print("✅ Módulo Verde (Jardinagem) registado")
-except ImportError:
-    MODULO_VERDE_DISPONIVEL = False
-    print("⚠️ Módulo Verde não disponível")
+print("🔧 Feature Flags carregadas:")
+print(f"   🌊 AQUA (Piscinas): {'✅ ATIVO' if FEATURE_AQUA else '❌ INATIVO'}")
+print(f"   🌱 VERDE (Jardinagem): {'✅ ATIVO' if FEATURE_VERDE else '❌ INATIVO'}")
+print(f"   🌿 PHYTO (Fitoterapia): {'✅ ATIVO' if FEATURE_PHYTO else '❌ INATIVO'}")
 
-try:
-    from modules.aqua.routers.servicos_piscina import router as aqua_router
-    MODULO_AQUA_DISPONIVEL = config.MODULO_AQUA_ATIVO
-    if MODULO_AQUA_DISPONIVEL:
-        print("✅ Módulo Aqua (Piscinas) registado")
-except ImportError:
-    MODULO_AQUA_DISPONIVEL = False
-    print("⚠️ Módulo Aqua não disponível")
+# ====================================================================
+# INICIALIZAÇÃO DA APLICAÇÃO FASTAPI
+# ====================================================================
 
-# Criar aplicação FastAPI
 app = FastAPI(
-    title=config.APP_NAME,
-    description="Sistema modular de gestão de serviços de campo com suporte para jardinagem e piscinas",
-    version=config.APP_VERSION,
+    title="GestOnGo API",
+    description="Sistema modular de gestão de serviços de campo",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    debug=config.DEBUG
+    openapi_url="/openapi.json"
 )
 
-# Configurar CORS com configurações do Replit
-cors_settings = config.get_cors_settings()
+# ====================================================================
+# CONFIGURAÇÃO DE MIDDLEWARE CORS
+# ====================================================================
+
+# CORS liberado para facilitar desenvolvimento
+# Em produção, configurar origins específicas
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_settings["allow_origins"],
-    allow_credentials=cors_settings["allow_credentials"],
-    allow_methods=cors_settings["allow_methods"],
-    allow_headers=cors_settings["allow_headers"],
+    allow_origins=["*"],  # ⚠️ Em produção, especificar domínios
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
 )
 
-# Registar routers da versão base (sempre disponíveis)
-app.include_router(users_router)
-app.include_router(clientes_router)
+print("🌐 CORS configurado para permitir todas as origens")
 
-# Registar routers dos módulos (condicionais)
-if MODULO_VERDE_DISPONIVEL:
-    app.include_router(verde_router)
+# ====================================================================
+# CARREGAMENTO DINÂMICO DE MÓDULOS
+# ====================================================================
 
-if MODULO_AQUA_DISPONIVEL:
-    app.include_router(aqua_router)
+# Dicionário para armazenar o status dos módulos
+modules_status: Dict[str, bool] = {}
+
+# --- MÓDULO AQUA (Piscinas) ---
+if FEATURE_AQUA:
+    try:
+        from modules.aqua.routers import aqua_router
+        app.include_router(aqua_router, prefix="/aqua", tags=["Aqua - Piscinas"])
+        modules_status["aqua"] = True
+        print("🌊 Módulo AQUA carregado com sucesso (Prefix: /aqua)")
+    except ImportError as e:
+        print(f"❌ Erro ao carregar módulo AQUA: {e}")
+        modules_status["aqua"] = False
+else:
+    modules_status["aqua"] = False
+    print("⏭️ Módulo AQUA desativado por feature flag")
+
+# --- MÓDULO VERDE (Jardinagem) ---
+if FEATURE_VERDE:
+    try:
+        from modules.verde.routers import verde_router
+        app.include_router(verde_router, prefix="/verde", tags=["Verde - Jardinagem"])
+        modules_status["verde"] = True
+        print("🌱 Módulo VERDE carregado com sucesso (Prefix: /verde)")
+    except ImportError as e:
+        print(f"❌ Erro ao carregar módulo VERDE: {e}")
+        modules_status["verde"] = False
+else:
+    modules_status["verde"] = False
+    print("⏭️ Módulo VERDE desativado por feature flag")
+
+# --- MÓDULO PHYTO (Fitoterapia) ---
+if FEATURE_PHYTO:
+    try:
+        from modules.phyto.routers import phyto_router
+        app.include_router(phyto_router, prefix="/phyto", tags=["Phyto - Fitoterapia"])
+        modules_status["phyto"] = True
+        print("🌿 Módulo PHYTO carregado com sucesso (Prefix: /phyto)")
+    except ImportError as e:
+        print(f"❌ Erro ao carregar módulo PHYTO: {e}")
+        modules_status["phyto"] = False
+else:
+    modules_status["phyto"] = False
+    print("⏭️ Módulo PHYTO desativado por feature flag")
+
+# ====================================================================
+# ENDPOINTS PRINCIPAIS
+# ====================================================================
+
+@app.get("/", summary="Status da API", description="Retorna o status da API e módulos ativos")
+async def root() -> Dict[str, Any]:
+    """
+    Endpoint raiz que retorna informações sobre o sistema e módulos ativos
+    
+    Returns:
+        Dicionário com status da API e informações dos módulos
+    """
+    # Contar módulos ativos
+    active_modules = [name for name, status in modules_status.items() if status]
+    total_modules = len(modules_status)
+    active_count = len(active_modules)
+    
+    return {
+        "status": "GestOnGo API online",
+        "version": "2.0.0",
+        "description": "Sistema modular de gestão de serviços de campo",
+        "modules": modules_status,
+        "summary": {
+            "total_modules": total_modules,
+            "active_modules": active_count,
+            "inactive_modules": total_modules - active_count,
+            "active_module_names": active_modules
+        },
+        "endpoints": {
+            "documentation": "/docs",
+            "openapi_schema": "/openapi.json",
+            "health_check": "/health"
+        }
+    }
+
+@app.get("/health", summary="Health Check", description="Endpoint de verificação de saúde do sistema")
+async def health_check() -> Dict[str, Any]:
+    """
+    Endpoint de health check para monitorização
+    
+    Returns:
+        Status de saúde do sistema e módulos
+    """
+    return {
+        "status": "healthy",
+        "service": "GestOnGo API",
+        "modules": modules_status,
+        "features": {
+            "aqua": FEATURE_AQUA,
+            "verde": FEATURE_VERDE,
+            "phyto": FEATURE_PHYTO
+        }
+    }
+
+@app.get("/modules", summary="Informações dos Módulos", description="Detalhes sobre todos os módulos disponíveis")
+async def get_modules_info() -> Dict[str, Any]:
+    """
+    Retorna informações detalhadas sobre todos os módulos
+    
+    Returns:
+        Informações completas dos módulos e suas funcionalidades
+    """
+    return {
+        "modules": {
+            "aqua": {
+                "name": "Aqua - Gestão de Piscinas",
+                "description": "Módulo para gestão de serviços de piscinas, manutenção e limpeza",
+                "prefix": "/aqua",
+                "enabled": modules_status.get("aqua", False),
+                "feature_flag": "FEATURE_AQUA"
+            },
+            "verde": {
+                "name": "Verde - Gestão de Jardinagem", 
+                "description": "Módulo para gestão de serviços de jardinagem e paisagismo",
+                "prefix": "/verde",
+                "enabled": modules_status.get("verde", False),
+                "feature_flag": "FEATURE_VERDE"
+            },
+            "phyto": {
+                "name": "Phyto - Fitoterapia",
+                "description": "Módulo para gestão de plantas medicinais e fitoterapia",
+                "prefix": "/phyto", 
+                "enabled": modules_status.get("phyto", False),
+                "feature_flag": "FEATURE_PHYTO"
+            }
+        },
+        "usage": {
+            "enable_module": "Set environment variable FEATURE_<MODULE>=true",
+            "disable_module": "Set environment variable FEATURE_<MODULE>=false",
+            "example": "FEATURE_AQUA=true FEATURE_VERDE=false FEATURE_PHYTO=true"
+        }
+    }
+
+# ====================================================================
+# INICIALIZAÇÃO DO SISTEMA
+# ====================================================================
 
 @app.on_event("startup")
 async def startup_event():
-    """
-    Eventos de arranque da aplicação
-    - Criar tabelas da base de dados
-    - Criar utilizador admin padrão se não existir
-    """
-    print("🚀 A inicializar GestOnGo...")
-    
-    # Criar tabelas
-    criar_tabelas()
-    
-    # Criar utilizador admin padrão
-    from sqlalchemy.orm import sessionmaker
-    from app.core.database import engine
-    from app.models_base.user import User
-    from app.core.security import gerar_hash_senha
-    
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    db = SessionLocal()
-    
-    try:
-        # Verificar se já existe utilizador admin
-        admin_user = db.query(User).filter(User.email == "admin@gestongo.com").first()
-        
-        if not admin_user:
-            # Criar utilizador admin padrão
-            admin_user = User(
-                nome="Administrador",
-                email="admin@gestongo.com",
-                hash_senha=gerar_hash_senha("admin123"),
-                is_active=True
-            )
-            db.add(admin_user)
-            db.commit()
-            print("👤 Utilizador admin criado: admin@gestongo.com / admin123")
-        else:
-            print("👤 Utilizador admin já existe")
-            
-    except Exception as e:
-        print(f"❌ Erro ao criar utilizador admin: {e}")
-        db.rollback()
-    finally:
-        db.close()
-    
-    print("✅ GestOnGo iniciado com sucesso!")
-    print(f"📚 Documentação disponível em: http://localhost:8000/docs")
-    print(f"🔧 Módulos activos: Base{', Verde' if MODULO_VERDE_DISPONIVEL else ''}{', Aqua' if MODULO_AQUA_DISPONIVEL else ''}")
+    """Eventos executados no início da aplicação"""
+    print("\n" + "="*60)
+    print("🚀 GestOnGo API iniciada com sucesso!")
+    print(f"📊 Módulos ativos: {len([m for m in modules_status.values() if m])}/{len(modules_status)}")
+    print("📚 Documentação disponível em: /docs")
+    print("🔧 Informações dos módulos: /modules")
+    print("💚 Health check: /health")
+    print("="*60 + "\n")
 
-@app.get("/")
-async def root():
-    """
-    Endpoint raiz com informações do sistema
-    """
-    modulos_activos = ["Base"]
-    if MODULO_VERDE_DISPONIVEL:
-        modulos_activos.append("Verde (Jardinagem)")
-    if MODULO_AQUA_DISPONIVEL:
-        modulos_activos.append("Aqua (Piscinas)")
-    
-    return {
-        "mensagem": "Bem-vindo ao GestOnGo!",
-        "versao": config.APP_VERSION,
-        "descricao": "Sistema modular de gestão de serviços de campo",
-        "ambiente": config.ENVIRONMENT,
-        "modulos_activos": modulos_activos,
-        "documentacao": "/docs",
-        "credenciais_teste": {
-            "email": "admin@gestongo.com",
-            "senha": "admin123"
-        }
-    }
+@app.on_event("shutdown") 
+async def shutdown_event():
+    """Eventos executados no encerramento da aplicação"""
+    print("👋 GestOnGo API encerrada")
 
-@app.get("/config")
-async def config_status():
-    """
-    Endpoint para verificar configuração (sem mostrar valores sensíveis)
-    """
-    secrets_status = config.verify_secrets()
-    
-    return {
-        "app_name": config.APP_NAME,
-        "version": config.APP_VERSION,
-        "environment": config.ENVIRONMENT,
-        "debug": config.DEBUG,
-        "database_type": config.DATABASE_TYPE,
-        "modules": {
-            "verde": config.MODULO_VERDE_ATIVO,
-            "aqua": config.MODULO_AQUA_ATIVO
-        },
-        "cors_origins_count": len(config.ALLOWED_ORIGINS),
-        "secrets_configured": {
-            secret: info["configured"] 
-            for secret, info in secrets_status.items()
-        }
-    }
+# ====================================================================
+# PONTO DE ENTRADA PARA DESENVOLVIMENTO
+# ====================================================================
 
-@app.get("/health")
-async def health_check():
-    """
-    Endpoint de verificação de saúde do sistema
-    """
-    return {
-        "status": "ok",
-        "modulos": {
-            "base": True,
-            "verde": MODULO_VERDE_DISPONIVEL,
-            "aqua": MODULO_AQUA_DISPONIVEL
-        }
-    }
+if __name__ == "__main__":
+    import uvicorn
+    
+    print("🔧 Executando em modo desenvolvimento...")
+    print("📍 Para produção, use: uvicorn main_modular:app --host 0.0.0.0 --port 8000")
+    
+    uvicorn.run(
+        "main_modular:app",
+        host="0.0.0.0", 
+        port=8000,
+        reload=True,
+        log_level="info"
+    )

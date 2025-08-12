@@ -1,4 +1,12 @@
-# Python
+# ====================================================================
+# GITIGNORE - GESTONGO MONOREPO
+# Configuração completa para Backend Python + Frontend React
+# ====================================================================
+
+# ====================================================================
+# PYTHON (BACKEND)
+# ====================================================================
+# Bytecode
 __pycache__/
 *.py[cod]
 *$py.class
@@ -187,6 +195,58 @@ gestongo.db
 logs
 *.log
 
-# GestOnGo specific
+# ====================================================================
+# GESTONGO ESPECÍFICO
+# ====================================================================
+# Scripts de teste temporários
+test_*.py
+verify_*.py
+scan_*.py
+check_*.py
+
+# Database
+*.sqlite
+*.sqlite3
+gestongo.db
+
+# Uploads e temporários
 uploads/
 temp/
+backup/
+archive/
+
+# Capturas de ecrã (manter apenas principais)
+Captura*.png
+ChatGPT*.png
+*.bmp
+*.webp
+
+# ====================================================================
+# VS CODE & GITHUB INTEGRATION
+# ====================================================================
+# VS Code settings (manter algumas configurações)
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# GitHub Actions cache
+.github/workflows/cache/
+
+# ====================================================================
+# DEPLOYMENT
+# ====================================================================
+# Vercel
+.vercel/
+
+# Netlify
+.netlify/
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Replit (manter configurações)
+.replit.nix
+replit.nix

@@ -1,56 +1,46 @@
-# 🚀 Deploy GestOnGo no Replit - Guia Passo a Passo
+# 🚀 Deploy GestOnGo no Replit - Status Atualizado
 
-## Status Atual: ❌ Projeto não encontrado no Replit
+## ✅ Status Atual: Projeto ENCONTRADO no Replit
 
-## 📋 Passos para Deploy Manual:
+**URL do Projeto:** https://replit.com/@tiago1982santos/GestOnGo-App?v=1  
+**Username:** tiago1982santos  
+**URL da API Esperada:** https://gestongo-app.tiago1982santos.repl.co
 
-### 1. **Criar Novo Repl no Replit**
-1. Vá para: https://replit.com
-2. Clique "Create Repl"
-3. Selecione "Import from GitHub"
-4. Cole a URL: `https://github.com/Ramos-bot/GestOnGo-App`
-5. Nome do Repl: `GestOnGo-App`
-6. Clique "Import from GitHub"
+## ❌ Status da API: OFFLINE
 
-### 2. **Configurar Secrets (CRÍTICO)**
-Na aba "Secrets" (🔑) do Replit, adicione:
+**Última verificação:** 2025-08-12 01:56:47  
+**Todos os endpoints testados falharam com erro de conexão**
 
+## 🔧 TROUBLESHOOTING IMEDIATO:
+
+### 1. **Verificar se o Repl está a executar** ▶️
+- Abrir: https://replit.com/@tiago1982santos/GestOnGo-App
+- Clicar no botão "Run" ▶️ se não estiver ativo
+- Aguardar aparecer "Webview" com a URL da API
+
+### 2. **Verificar Console/Logs** 📋
+- Na aba "Console" do Replit, procurar por:
+  ```
+  🚀 GestOnGo API iniciada com sucesso!
+  ```
+- Se houver erros, verificar:
+  - Dependências em falta
+  - Secrets não configurados
+  - Erros de import dos módulos
+
+### 3. **Configurar Secrets Obrigatórios** 🔐
+Na aba "Secrets" (🔑), adicionar:
 ```
-JWT_SECRET_KEY = !%59v0vP#:xKWsr$pJm1UeTUO@=afLW){!n}vL)(cMKC:P!9GTnapMyV{#;E}M<,
-JWT_ALGORITHM = HS256
-JWT_EXPIRATION_MINUTES = 30
-DATABASE_URL = sqlite:///./gestongo.db
-DATABASE_TYPE = sqlite
-APP_NAME = GestOnGo
-APP_VERSION = 2.0.0
-ENVIRONMENT = production
-DEBUG = false
-MODULO_VERDE_ATIVO = true
-MODULO_AQUA_ATIVO = true
-ENABLE_ADMIN_ROUTES = true
-ALLOWED_ORIGINS = https://gestongo-app.web.app,https://gestongo-app.firebaseapp.com,http://localhost:5173
-CORS_ALLOW_CREDENTIALS = true
-HOST = 0.0.0.0
-PORT = 8000
+FEATURE_AQUA = true
+FEATURE_VERDE = true
+FEATURE_PHYTO = false
 ```
 
-### 3. **Verificar Configuração**
-O Replit deve automaticamente:
-- ✅ Ler o arquivo `.replit`
-- ✅ Instalar dependências do `requirements.txt`
-- ✅ Configurar Python 3.11
-- ✅ Expor porta 8000
-
-### 4. **Executar o Projeto**
-1. Clique o botão "Run" ▶️
-2. Aguarde instalação das dependências
-3. O servidor deve iniciar na porta 8000
-
-### 5. **URLs Esperadas Após Deploy**
-- **API Principal**: `https://gestongo-app.ramos-bot.repl.co`
-- **Documentação**: `https://gestongo-app.ramos-bot.repl.co/docs`
-- **Health Check**: `https://gestongo-app.ramos-bot.repl.co/health`
-- **Config Status**: `https://gestongo-app.ramos-bot.repl.co/config`
+### 4. **URLs Corretas para Testar:**
+- **API Principal**: https://gestongo-app.tiago1982santos.repl.co
+- **Documentação**: https://gestongo-app.tiago1982santos.repl.co/docs
+- **Health Check**: https://gestongo-app.tiago1982santos.repl.co/health
+- **Módulos**: https://gestongo-app.tiago1982santos.repl.co/modules
 
 ### 6. **Verificar Funcionamento**
 Execute o endpoint `/config` para verificar:
