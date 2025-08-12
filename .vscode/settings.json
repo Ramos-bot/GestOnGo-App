@@ -1,6 +1,5 @@
 {
     "// CONFIGURAÇÕES DO VS CODE - GESTONGO": "Configurações específicas do projeto",
-    
     "// Configurações gerais do editor": "",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
@@ -9,7 +8,6 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
     },
-    
     "// Configurações Python (Backend)": "",
     "python.defaultInterpreterPath": "./backend/venv/Scripts/python.exe",
     "python.terminal.activateEnvironment": true,
@@ -17,13 +15,14 @@
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.formatting.provider": "black",
-    "python.sortImports.args": ["--profile", "black"],
-    
+    "python.sortImports.args": [
+        "--profile",
+        "black"
+    ],
     "// Configurações TypeScript/JavaScript (Frontend)": "",
     "typescript.preferences.importModuleSpecifier": "relative",
     "typescript.suggest.autoImports": true,
     "javascript.suggest.autoImports": true,
-    
     "// Configurações de arquivos": "",
     "files.associations": {
         "*.py": "python",
@@ -33,7 +32,6 @@
         ".env*": "dotenv",
         "*.md": "markdown"
     },
-    
     "// Exclusões do explorador": "",
     "files.exclude": {
         "**/__pycache__": true,
@@ -43,17 +41,14 @@
         "**/build": true,
         "**/*.pyc": true
     },
-    
     "// Configurações Git": "",
     "git.autofetch": true,
     "git.confirmSync": false,
     "git.enableSmartCommit": true,
     "git.suggestSmartCommit": true,
-    
     "// Terminal integrado": "",
     "terminal.integrated.defaultProfile.windows": "PowerShell",
     "terminal.integrated.cwd": "${workspaceFolder}",
-    
     "// Configurações de busca": "",
     "search.exclude": {
         "**/node_modules": true,
@@ -64,14 +59,11 @@
         "**/venv": true,
         "**/env": true
     },
-    
     "// IntelliSense e autocomplete": "",
     "editor.suggestSelection": "first",
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-    
     "// Configurações de debug": "",
     "debug.internalConsoleOptions": "openOnSessionStart",
-    
     "// GitHub Copilot": "",
     "github.copilot.enable": {
         "*": true,
@@ -84,7 +76,6 @@
         "typescriptreact": true,
         "javascriptreact": true
     },
-    
     "// Emmet": "",
     "emmet.includeLanguages": {
         "javascriptreact": "html",

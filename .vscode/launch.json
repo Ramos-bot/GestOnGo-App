@@ -24,7 +24,10 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/frontend",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "dev"],
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
             "port": 5173,
             "webRoot": "${workspaceFolder}/frontend/src",
             "console": "integratedTerminal"
@@ -43,7 +46,7 @@
             "console": "integratedTerminal",
             "env": {
                 "FEATURE_AQUA": "true",
-                "FEATURE_VERDE": "true", 
+                "FEATURE_VERDE": "true",
                 "FEATURE_PHYTO": "true",
                 "PYTHONPATH": "${workspaceFolder}/backend"
             }

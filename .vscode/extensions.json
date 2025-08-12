@@ -10,7 +10,6 @@
         "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode",
         "ms-vscode.vscode-typescript-next",
-        
         // ================================================
         // GITHUB & GIT
         // ================================================
@@ -20,7 +19,6 @@
         "github.remotehub",
         "eamodio.gitlens",
         "mhutchie.git-graph",
-        
         // ================================================
         // REACT & FRONTEND
         // ================================================
@@ -29,7 +27,6 @@
         "formulahendry.auto-rename-tag",
         "christian-kohler.path-intellisense",
         "ms-vscode.vscode-json",
-        
         // ================================================
         // PYTHON & BACKEND
         // ================================================
@@ -39,7 +36,6 @@
         "ms-python.black-formatter",
         "ms-python.isort",
         "charliermarsh.ruff",
-        
         // ================================================
         // PRODUTIVIDADE
         // ================================================
@@ -49,7 +45,6 @@
         "pkief.material-icon-theme",
         "zhuangtongfa.material-theme",
         "formulahendry.code-runner",
-        
         // ================================================
         // DEPLOYMENT & DEVOPS
         // ================================================
@@ -57,21 +52,18 @@
         "ms-vscode-remote.remote-containers",
         "ms-vscode.powershell",
         "redhat.vscode-yaml",
-        
         // ================================================
         // DATABASES & APIs
         // ================================================
         "mtxr.sqltools",
         "humao.rest-client",
         "42crunch.vscode-openapi",
-        
         // ================================================
         // MARKDOWN & DOCUMENTAÇÃO
         // ================================================
         "yzhang.markdown-all-in-one",
         "davidanson.vscode-markdownlint",
         "bierner.markdown-preview-github-styles",
-        
         // ================================================
         // GESTONGO ESPECÍFICAS
         // ================================================

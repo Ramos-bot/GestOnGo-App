@@ -5,7 +5,9 @@
             "label": "🚀 Iniciar Backend (FastAPI)",
             "type": "shell",
             "command": "python",
-            "args": ["main_modular.py"],
+            "args": [
+                "main_modular.py"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/backend",
                 "env": {
@@ -29,7 +31,10 @@
             "label": "🌐 Iniciar Frontend (React)",
             "type": "shell",
             "command": "npm",
-            "args": ["run", "dev"],
+            "args": [
+                "run",
+                "dev"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             },
@@ -48,7 +53,10 @@
             "label": "📦 Build Frontend (Produção)",
             "type": "shell",
             "command": "npm",
-            "args": ["run", "build"],
+            "args": [
+                "run",
+                "build"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             },
@@ -67,7 +75,9 @@
             "label": "🔧 Verificar Status Replit",
             "type": "shell",
             "command": "python",
-            "args": ["verify_replit_status.py"],
+            "args": [
+                "verify_replit_status.py"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -86,7 +96,11 @@
             "label": "📂 Instalar Dependências Backend",
             "type": "shell",
             "command": "pip",
-            "args": ["install", "-r", "requirements.txt"],
+            "args": [
+                "install",
+                "-r",
+                "requirements.txt"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/backend"
             },
@@ -105,7 +119,9 @@
             "label": "📂 Instalar Dependências Frontend",
             "type": "shell",
             "command": "npm",
-            "args": ["install"],
+            "args": [
+                "install"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             },
@@ -141,7 +157,9 @@
             "label": "📊 Git Status",
             "type": "shell",
             "command": "git",
-            "args": ["status"],
+            "args": [
+                "status"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -157,7 +175,9 @@
             "label": "📤 Git Push",
             "type": "shell",
             "command": "git",
-            "args": ["push"],
+            "args": [
+                "push"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -173,7 +193,9 @@
             "label": "📥 Git Pull",
             "type": "shell",
             "command": "git",
-            "args": ["pull"],
+            "args": [
+                "pull"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
