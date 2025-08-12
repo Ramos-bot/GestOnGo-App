@@ -1,0 +1,29 @@
+{
+    "name": "gestongo",
+    "private": true,
+    "description": "GestOnGo - Gestão de Clientes e Tarefas",
+    "scripts": {
+        "start": "npm-run-all --parallel start:frontend start:backend",
+        "start:frontend": "cd frontend && npm start",
+        "start:backend": "cd backend && npm start",
+        "test": "npm-run-all --parallel test:frontend test:backend",
+        "test:frontend": "cd frontend && npm test -- --watchAll=false --passWithNoTests",
+        "test:backend": "cd backend && npm test",
+        "build": "npm-run-all build:frontend build:backend",
+        "build:frontend": "cd frontend && npm run build",
+        "build:backend": "cd backend && npm run build",
+        "install:all": "npm-run-all install:frontend install:backend",
+        "install:frontend": "cd frontend && npm install",
+        "install:backend": "cd backend && npm install",
+        "lint": "npm -w frontend run lint && npm -w backend run lint"
+    },
+    "devDependencies": {
+        "husky": "^9.1.6",
+        "lint-staged": "^15.2.9",
+        "npm-run-all": "^4.1.5"
+    },
+    "lint-staged": {
+        "frontend/**/*.{js,jsx}": "eslint --max-warnings=0",
+        "backend/**/*.js": "eslint --max-warnings=0"
+    }
+}

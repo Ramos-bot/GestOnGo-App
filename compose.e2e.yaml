@@ -1,0 +1,26 @@
+name: gestongo-e2e
+services:
+  api:
+    build: ./backend
+    environment: [NODE_ENV=production, PORT=8000]
+    expose: ["8000"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: ./frontend
+    depends_on:
+      api:
+        condition: service_healthy
+    ports: ["8080:80"]
+
+  e2e:
+    build: ./e2e
+    depends_on:
+      web:
+        condition: service_started
+    environment:
+      - BASE_URL=http://web

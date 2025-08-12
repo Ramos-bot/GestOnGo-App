@@ -27,10 +27,13 @@
     "rules": {
         "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
-        "no-unused-vars": ["warn", { 
-            "argsIgnorePattern": "^_", 
-            "varsIgnorePattern": "^ignored" 
-        }],
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^ignored"
+            }
+        ],
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn"
     }

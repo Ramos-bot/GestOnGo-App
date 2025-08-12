@@ -1,23 +1,29 @@
 # ====================================================================
-# GITIGNORE - GESTONGO MONOREPO
-# Configuração completa para Backend Python + Frontend React
+# GITIGNORE - GESTONGO MONOREPO NODE.JS
+# Backend Express + Frontend React (CRA)
 # ====================================================================
 
-# ====================================================================
-# PYTHON (BACKEND)
-# ====================================================================
-# Bytecode
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Builds
 dist/
-downloads/
-eggs/
-.eggs/
+build/
+coverage/
+
+# Editor/OS
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Env
+.env
+.env.*
 lib/
 lib64/
 parts/
